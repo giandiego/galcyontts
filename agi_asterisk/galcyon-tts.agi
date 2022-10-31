@@ -1,0 +1,100 @@
+#!/usr/bin/php -q
+<?php
+
+require('/var/lib/asterisk/agi-bin/phpagi/phpagi.php');
+$agi	=	new AGI();
+$url	=	'https://tts.galcyon.com:8001/api/v1/tts/textToSpeech';
+$txt	=	$_SERVER['argv'][1];
+$voice	=	$_SERVER['argv'][2] === null ? "Ximena" : $_SERVER['argv'][2];
+$intKey	=	$_SERVER['argv'][3];
+
+$audio_tts = DownloadAudio($url, $txt, $token, $voice);
+
+if ($audio_tts) {
+	//quitar el .wav
+	$path_parts = pathinfo($audio_tts);
+	$audio_play = $path_parts['filename'];
+
+	$agi->answer();
+	$agi->stream_file("/tmp/" . $audio_play, $intKey);
+	$agi->set_variable("tts_result", "OK");
+
+	unlink($audio_tts);
+} else {
+	$agi->set_variable("tts_result", "FAILED");
+	exit(0);
+}
+
+
+function DownloadAudio($url, $txt, $token, $voice)
+{
+	//'{ "Action": "textToSpeech", "Data": { "Message": "hola mundo 3" } }'
+	$data = array(
+		"Action" => "textToSpeech",
+		"Data" => array(
+			"Message" => $txt,
+			"Voice" => $voice
+		)
+	);
+
+	$data_string = json_encode($data);
+
+	$curl	=	curl_init();
+	curl_setopt_array($curl, array(
+		CURLOPT_URL => $url,
+		CURLOPT_SSL_VERIFYPEER => FALSE,
+		CURLOPT_SSL_VERIFYHOST => 2,
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_ENCODING => '',
+		CURLOPT_MAXREDIRS => 10,
+		CURLOPT_TIMEOUT => 0,
+		CURLOPT_FOLLOWLOCATION => true,
+		CURLOPT_HEADER => true,
+		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		CURLOPT_CUSTOMREQUEST => 'POST',
+		CURLOPT_POSTFIELDS => $data_string, //
+		CURLOPT_HTTPHEADER => array(
+			'Content-Type: application/json',
+		),
+	));
+
+	$response = curl_exec($curl);
+
+	// get info about the request
+	$info = curl_getinfo($curl);
+
+	if ($info['http_code'] === 200) {
+
+		$header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+		$body = substr($response, $header_size);
+
+		foreach (explode("\r\n", trim(substr($response, 0, $header_size))) as $row) {
+			if (preg_match('/(.*?): (.*)/', $row, $matches)) {
+				$headers[$matches[1]] = $matches[2];
+			}
+		}
+
+		// first take filename from url
+		$filename = 'tmp-name.wav';
+
+		// if Content-Disposition is present and file name is found use this
+		if (isset($headers["Content-Disposition"])) {
+			// this catches filenames between Quotes
+			if (preg_match('/.*filename=[\'\"]([^\'\"]+)/', $headers["Content-Disposition"], $matches)) {
+				$filename = $matches[1];
+			}
+			// if filename is not quoted, we take all until the next space
+			else if (preg_match("/.*filename=([^ ]+)/", $headers["Content-Disposition"], $matches)) {
+				$filename = $matches[1];
+			}
+		}
+
+		$filename = "/tmp/" . preg_replace("/[^a-zA-Z0-9_#\(\)\[\]\.+-=]/", "", $filename);
+		file_put_contents($filename, $body); // save the string to a file
+
+		return $filename;
+	} else {
+
+		return false;
+	}
+}

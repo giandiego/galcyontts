@@ -1,0 +1,195 @@
+{
+	"info": {
+		"_postman_id": "cc60fa03-672b-4151-8a54-f9505a2cbad7",
+		"name": "API TTS GALCYON",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12373830"
+	},
+	"item": [
+		{
+			"name": "TTS",
+			"item": [
+				{
+					"name": "Tts Status",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/v1/tts/ttsStatus",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tts",
+								"ttsStatus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Voice List",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/tts/voiceList",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tts",
+								"voiceList"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Text To Speech Loquendo",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"Action\": \"textToSpeech\",\r\n  \"Data\": {\r\n    \"Message\": \"Bienvenido al sistema de TTS de Loquendo, puedes escribir lo que gustes.\",\r\n    \"Voice\": \"Carlos\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/tts/textToSpeech",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tts",
+								"textToSpeech"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Text To Speech Edge-tts ES",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Action\": \"textToSpeech\",\r\n    \"Data\": {\r\n        \"Message\": \"Bienvenido al sistema de T T S de Edge, puedes escribir lo que gustes.\",\r\n        \"Voice\": \"es-PE-Camila\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/tts/textToSpeech",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tts",
+								"textToSpeech"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Text To Speech Edge-tts EN",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Action\": \"textToSpeech\",\r\n    \"Data\": {\r\n        \"Message\": \"Welcome to the Edge TTS system, you can write whatever you like.\",\r\n        \"Voice\": \"en-US-Aria\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/tts/textToSpeech",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tts",
+								"textToSpeech"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "https://tts.galcyon.com:8001"
+		}
+	]
+}
